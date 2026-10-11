@@ -11,7 +11,9 @@
   <meta name="apple-mobile-web-app-title" content="ჩემი დღეები">
   <meta name="description" content="ახალი წლისა და დაბადების დღის უკუთვლა">
   <title>ჩემი დღეები ✨</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🎂</text></svg>">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Noto+Sans+Georgian:wght@500;600;700&display=swap">
@@ -109,7 +111,13 @@
 
       <header class="card__head">
         <h2 class="card__title" id="bd-title">რამდენი დარჩა ჩემს დაბადების დღემდე? <span class="emoji" data-burst="bd">🎂</span></h2>
-        <p class="chip"><span aria-hidden="true">🎁</span> <time id="bd-date">21 ოქტომბერი</time></p>
+        <div class="card__meta">
+          <p class="chip"><span aria-hidden="true">🎁</span> <time id="bd-date">21 ოქტომბერი</time></p>
+          <button class="edit-btn" id="bd-edit" type="button" aria-haspopup="dialog" aria-controls="bd-dialog">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.6 2.6a1.6 1.6 0 0 1 2.3 2.3l-7.4 7.4-3 .7.7-3z"/></svg>
+            თარიღის შეცვლა
+          </button>
+        </div>
       </header>
 
       <div class="card__body">
@@ -131,6 +139,28 @@
       </div>
     </section>
   </main>
+
+  <!-- დაბადების დღის თარიღის არჩევა -->
+  <dialog class="sheet" id="bd-dialog" aria-labelledby="bd-dialog-title">
+    <form class="sheet__panel" method="dialog">
+      <span class="sheet__icon" aria-hidden="true">🎂</span>
+      <h3 class="sheet__title" id="bd-dialog-title">როდის არის დაბადების დღე?</h3>
+      <div class="sheet__fields">
+        <label class="field">
+          <span class="field__label">დღე</span>
+          <select class="field__select" id="bd-day" name="day"></select>
+        </label>
+        <label class="field field--wide">
+          <span class="field__label">თვე</span>
+          <select class="field__select" id="bd-month" name="month"></select>
+        </label>
+      </div>
+      <div class="sheet__actions">
+        <button class="btn btn--ghost" type="button" data-cancel>გაუქმება</button>
+        <button class="btn btn--primary" type="submit">შენახვა</button>
+      </div>
+    </form>
+  </dialog>
 
   <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
 

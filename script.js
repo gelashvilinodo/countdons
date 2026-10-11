@@ -13,7 +13,8 @@
   const CONFIG = {
     timeZone: 'Asia/Tbilisi',
     fallbackOffsetMinutes: 240,          // UTC+4, თუ ბრაუზერს დროის ზონები არ აქვს
-    birthday: { month: 10, day: 21 },    // 21 ოქტომბერი
+    defaultBirthday: { month: 10, day: 21 }, // 21 ოქტომბერი
+    storageKey: 'countdons.birthday',
   };
 
   const MONTHS = ['იანვარი', 'თებერვალი', 'მარტი', 'აპრილი', 'მაისი', 'ივნისი',
@@ -85,8 +86,37 @@
     return result;
   }
 
+  // ---------- დაბადების დღე (ინახება localStorage-ში) ----------
+  const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+  const daysInMonth = (year, month) => new Date(Date.UTC(year, month, 0)).getUTCDate();
+
+  /** სწორია თუ არა დღე/თვე (29 თებერვალი დაშვებულია) */
+  function isValidBirthday(b) {
+    return !!b && Number.isInteger(b.month) && Number.isInteger(b.day) &&
+      b.month >= 1 && b.month <= 12 && b.day >= 1 && b.day <= daysInMonth(2024, b.month);
+  }
+
+  function loadBirthday() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(CONFIG.storageKey));
+      if (isValidBirthday(saved)) return { month: saved.month, day: saved.day };
+    } catch (e) { /* არასწორი მონაცემი ან მიუწვდომელი საცავი */ }
+    return { ...CONFIG.defaultBirthday };
+  }
+
+  function saveBirthday(b) {
+    try { localStorage.setItem(CONFIG.storageKey, JSON.stringify({ month: b.month, day: b.day })); } catch (e) { /* პრივატული რეჟიმი */ }
+  }
+
+  let birthday = loadBirthday();
+
+  /** დაბადების დღე კონკრეტულ წელს (29 თებერვალი → 28 არანაკიან წელს) */
+  function birthdayIn(year) {
+    const day = birthday.month === 2 && birthday.day === 29 && !isLeap(year) ? 28 : birthday.day;
+    return { year, month: birthday.month, day };
+  }
+
   // ---------- მოვლენები ----------
-  const B = CONFIG.birthday;
 
   const EVENTS = [
     {
@@ -94,20 +124,24 @@
       isToday: (p) => p.month === 1 && p.day === 1,
       next: (p) => ({ year: p.year + 1, month: 1, day: 1 }),
       prev: (t) => ({ year: t.year - 1, month: 1, day: 1 }),
-      dateLabel: (t) => `${t.day} ${MONTHS[t.month - 1]} ${t.year}, ${weekday(t)}`,
-      todayLabel: (p) => `${p.day} ${MONTHS[p.month - 1]} ${p.year} — დღესასწაული!`,
+      dateLabel: (t) => [`${t.day} ${MONTHS[t.month - 1]} ${t.year}`, `, ${weekday(t)}`],
+      todayLabel: (p) => [`${p.day} ${MONTHS[p.month - 1]} ${p.year}`, ' — დღესასწაული!'],
       sub: (p) => `ბედნიერ ${p.year} წელს გისურვებ! ✨`,
     },
     {
       id: 'bd',
-      isToday: (p) => p.month === B.month && p.day === B.day,
-      next: (p) => {
-        const passed = p.month > B.month || (p.month === B.month && p.day >= B.day);
-        return { year: passed ? p.year + 1 : p.year, month: B.month, day: B.day };
+      isToday: (p) => {
+        const b = birthdayIn(p.year);
+        return p.month === b.month && p.day === b.day;
       },
-      prev: (t) => ({ year: t.year - 1, month: B.month, day: B.day }),
-      dateLabel: (t) => `${t.day} ${MONTHS[t.month - 1]}, ${weekday(t)}`,
-      todayLabel: (p) => `${p.day} ${MONTHS[p.month - 1]} — დღეს შენი დღეა!`,
+      next: (p) => {
+        const b = birthdayIn(p.year);
+        const passed = p.month > b.month || (p.month === b.month && p.day >= b.day);
+        return passed ? birthdayIn(p.year + 1) : b;
+      },
+      prev: (t) => birthdayIn(t.year - 1),
+      dateLabel: (t) => [`${t.day} ${MONTHS[t.month - 1]}`, `, ${weekday(t)}`],
+      todayLabel: (p) => [`${p.day} ${MONTHS[p.month - 1]}`, ' — დღეს შენი დღეა!'],
       sub: () => 'დღეს ყველაზე განსაკუთრებული დღეა 🎈',
     },
   ];
@@ -134,6 +168,17 @@
     ev.lastDateText = '';
   }
 
+  /** ჩიპი და ღილაკი ერთ რიგში: საჭიროებისას კვირის დღე იმალება */
+  function fitMeta(card) {
+    const meta = card.querySelector('.card__meta');
+    if (!meta) return;
+    meta.classList.remove('is-compact');
+    const items = meta.children;
+    if (items.length > 1 && items[items.length - 1].offsetTop > items[0].offsetTop + 4) {
+      meta.classList.add('is-compact');
+    }
+  }
+
   function setNum(ev, unit, value, animate) {
     if (ev.values[unit] === value) return;
     ev.values[unit] = value;
@@ -157,9 +202,15 @@
     }
 
     const target = ev.next(parts);
-    const dateText = celebrating ? ev.todayLabel(parts) : ev.dateLabel(target);
+    const [main, extra] = celebrating ? ev.todayLabel(parts) : ev.dateLabel(target);
+    const dateText = main + extra;
     if (dateText !== ev.lastDateText) {
-      ev.dateEl.textContent = dateText;
+      ev.dateEl.textContent = main;
+      const extraEl = document.createElement('span');
+      extraEl.className = 'chip__extra';
+      extraEl.textContent = extra;
+      ev.dateEl.append(extraEl);
+      fitMeta(ev.card);
       ev.dateEl.setAttribute('datetime', `${target.year}-${pad(target.month)}-${pad(target.day)}`);
       ev.lastDateText = dateText;
     }
@@ -334,12 +385,72 @@
     }
   });
 
+  // ---------- დაბადების დღის თარიღის არჩევა ----------
+  (function () {
+    const dialog = document.getElementById('bd-dialog');
+    const form = dialog.querySelector('form');
+    const daySelect = document.getElementById('bd-day');
+    const monthSelect = document.getElementById('bd-month');
+    const openButton = document.getElementById('bd-edit');
+
+    // ძველი Safari-სთვის, სადაც <dialog> არ არის
+    if (typeof dialog.showModal !== 'function') {
+      dialog.showModal = () => { dialog.setAttribute('open', ''); };
+      dialog.close = () => { dialog.removeAttribute('open'); dialog.dispatchEvent(new Event('close')); };
+    }
+
+    MONTHS.forEach((name, i) => monthSelect.add(new Option(name, String(i + 1))));
+
+    // დღეების სია არჩეული თვის მიხედვით (თებერვალში 29 — ნაკიანი წლისთვის)
+    function fillDays(month, selectedDay) {
+      const max = daysInMonth(2024, month);
+      daySelect.length = 0;
+      for (let d = 1; d <= max; d++) daySelect.add(new Option(String(d), String(d)));
+      daySelect.value = String(Math.min(selectedDay, max));
+    }
+
+    monthSelect.addEventListener('change', () => {
+      fillDays(Number(monthSelect.value), Number(daySelect.value));
+    });
+
+    openButton.addEventListener('click', () => {
+      monthSelect.value = String(birthday.month);
+      fillDays(birthday.month, birthday.day);
+      dialog.showModal();
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const choice = { month: Number(monthSelect.value), day: Number(daySelect.value) };
+      if (isValidBirthday(choice)) {
+        birthday = choice;
+        saveBirthday(birthday);
+        tick();
+      }
+      dialog.close();
+    });
+
+    dialog.querySelector('[data-cancel]').addEventListener('click', () => dialog.close());
+
+    // ფონზე დაჭერა = გაუქმება
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => openButton.focus({ preventScroll: true }));
+  })();
+
   // ---------- 100dvh-ის სათადარიგო ვარიანტი ძველი Safari-სთვის ----------
   if (!(window.CSS && CSS.supports && CSS.supports('height', '100dvh'))) {
     const stage = document.querySelector('.stage');
     const fit = () => { stage.style.height = window.innerHeight + 'px'; };
     fit();
     window.addEventListener('resize', fit, { passive: true });
+  }
+
+  window.addEventListener('resize', () => EVENTS.forEach((ev) => fitMeta(ev.card)), { passive: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => EVENTS.forEach((ev) => fitMeta(ev.card)));
   }
 
   // ჩანართზე დაბრუნებისას მაშინვე განახლება
