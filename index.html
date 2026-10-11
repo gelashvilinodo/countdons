@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF7F2">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ჩემი დღეები">
+  <meta name="description" content="ახალი წლისა და დაბადების დღის უკუთვლა">
+  <title>ჩემი დღეები ✨</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🎂</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Noto+Sans+Georgian:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ნელი ფონური დეკორაცია -->
+  <div class="ambient" aria-hidden="true">
+    <span class="blob blob--pink"></span>
+    <span class="blob blob--lavender"></span>
+    <span class="blob blob--sage"></span>
+    <span class="twinkle" style="--x:12%;--y:48%;--d:0s"></span>
+    <span class="twinkle" style="--x:88%;--y:51%;--d:1.8s"></span>
+    <span class="twinkle" style="--x:50%;--y:49.5%;--d:3.2s"></span>
+  </div>
+
+  <main class="stage">
+    <!-- ===== ახალი წელი ===== -->
+    <section class="card card--ny" id="ny" aria-labelledby="ny-title">
+      <div class="card__decor" aria-hidden="true">
+        <div class="garland">
+          <svg class="garland__string" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 1 Q50 15 100 1"/></svg>
+          <span class="bauble" style="--x:9;--k:.33;--len:.10;--c1:#F4DDE4;--c2:#E3B3C2;--d:-1s"></span>
+          <span class="bauble" style="--x:23;--k:.71;--len:.20;--c1:#DDE9DF;--c2:#A9C7B0;--d:-3s"></span>
+          <span class="bauble" style="--x:37;--k:.93;--len:.08;--c1:#E8E1F5;--c2:#B9A9DE;--d:-2s"></span>
+          <span class="bauble bauble--star" style="--x:50;--k:1;--len:.16;--d:-4s"></span>
+          <span class="bauble" style="--x:63;--k:.93;--len:.08;--c1:#F4DDE4;--c2:#E3B3C2;--d:-5s"></span>
+          <span class="bauble" style="--x:77;--k:.71;--len:.20;--c1:#E8E1F5;--c2:#B9A9DE;--d:-2.5s"></span>
+          <span class="bauble" style="--x:91;--k:.33;--len:.10;--c1:#DDE9DF;--c2:#A9C7B0;--d:-.5s"></span>
+        </div>
+        <div class="drift drift--snow">
+          <i style="--x:6%;--s:5px;--t:14s;--d:-2s"></i>
+          <i style="--x:18%;--s:3px;--t:18s;--d:-9s"></i>
+          <i style="--x:31%;--s:4px;--t:16s;--d:-5s"></i>
+          <i style="--x:46%;--s:3px;--t:20s;--d:-13s"></i>
+          <i style="--x:59%;--s:5px;--t:15s;--d:-7s"></i>
+          <i style="--x:72%;--s:3px;--t:19s;--d:-1s"></i>
+          <i style="--x:84%;--s:4px;--t:17s;--d:-11s"></i>
+          <i style="--x:95%;--s:3px;--t:21s;--d:-4s"></i>
+        </div>
+      </div>
+
+      <header class="card__head">
+        <h1 class="card__title" id="ny-title">რამდენი დარჩა ახალ წლამდე? <span class="emoji" data-burst="ny">🎄</span></h1>
+        <p class="chip"><span aria-hidden="true">❄️</span> <time id="ny-date">1 იანვარი</time></p>
+      </header>
+
+      <div class="card__body">
+        <ol class="units" role="timer" aria-label="ახალ წლამდე დარჩენილი დრო">
+          <li class="unit"><span class="unit__num" data-unit="days">00</span><span class="unit__label">დღე</span></li>
+          <li class="unit"><span class="unit__num" data-unit="hours">00</span><span class="unit__label">საათი</span></li>
+          <li class="unit"><span class="unit__num" data-unit="minutes">00</span><span class="unit__label">წუთი</span></li>
+          <li class="unit unit--accent"><span class="unit__num" data-unit="seconds">00</span><span class="unit__label">წამი</span></li>
+        </ol>
+        <div class="celebrate" aria-live="polite">
+          <p class="celebrate__title">გილოცავ ახალ წელს! 🎄✨</p>
+          <p class="celebrate__sub" data-sub></p>
+        </div>
+      </div>
+
+      <div class="progress" role="progressbar" aria-label="წლის გზა ახალი წლისკენ" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="progress__track"><span class="progress__fill" data-progress-fill></span></span>
+        <span class="progress__value" data-progress-value>0%</span>
+      </div>
+    </section>
+
+    <!-- ===== დაბადების დღე ===== -->
+    <section class="card card--bd" id="bd" aria-labelledby="bd-title">
+      <div class="card__decor" aria-hidden="true">
+        <div class="balloons">
+          <span class="balloon" style="--x:7;--y:.16;--c1:#F4DDE4;--c2:#E6AFC0;--d:-1s"></span>
+          <span class="balloon" style="--x:18;--y:.02;--c1:#E8E1F5;--c2:#BCADE0;--d:-3s"></span>
+          <span class="bow">
+            <svg viewBox="0 0 64 34">
+              <path d="M32 15 C22 2 6 2 6 13 C6 23 22 22 32 17Z" fill="#EDBCCB"/>
+              <path d="M32 15 C42 2 58 2 58 13 C58 23 42 22 32 17Z" fill="#EDBCCB"/>
+              <path d="M30 17 L22 33 L27 31 L30 34Z M34 17 L42 33 L37 31 L34 34Z" fill="#E3A8BA"/>
+              <ellipse cx="32" cy="16" rx="5" ry="4.5" fill="#E3A8BA"/>
+              <path d="M12 11 C14 7 20 7 24 10" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="balloon" style="--x:82;--y:.02;--c1:#DDE9DF;--c2:#A6C6AE;--d:-2s"></span>
+          <span class="balloon" style="--x:93;--y:.16;--c1:#F4DDE4;--c2:#E6AFC0;--d:-4s"></span>
+        </div>
+        <div class="drift drift--rise">
+          <i style="--x:8%;--s:5px;--t:16s;--d:-3s;--c:#F0C6D3"></i>
+          <i style="--x:22%;--s:4px;--t:20s;--d:-11s;--c:#CFC3EC"></i>
+          <i style="--x:37%;--s:3px;--t:18s;--d:-6s;--c:#BFD8C5"></i>
+          <i style="--x:53%;--s:5px;--t:22s;--d:-15s;--c:#F0C6D3"></i>
+          <i style="--x:68%;--s:3px;--t:17s;--d:-1s;--c:#CFC3EC"></i>
+          <i style="--x:81%;--s:4px;--t:21s;--d:-8s;--c:#BFD8C5"></i>
+          <i style="--x:94%;--s:3px;--t:19s;--d:-13s;--c:#F0C6D3"></i>
+        </div>
+      </div>
+
+      <header class="card__head">
+        <h2 class="card__title" id="bd-title">რამდენი დარჩა ჩემს დაბადების დღემდე? <span class="emoji" data-burst="bd">🎂</span></h2>
+        <p class="chip"><span aria-hidden="true">🎁</span> <time id="bd-date">21 ოქტომბერი</time></p>
+      </header>
+
+      <div class="card__body">
+        <ol class="units" role="timer" aria-label="დაბადების დღემდე დარჩენილი დრო">
+          <li class="unit"><span class="unit__num" data-unit="days">00</span><span class="unit__label">დღე</span></li>
+          <li class="unit"><span class="unit__num" data-unit="hours">00</span><span class="unit__label">საათი</span></li>
+          <li class="unit"><span class="unit__num" data-unit="minutes">00</span><span class="unit__label">წუთი</span></li>
+          <li class="unit unit--accent"><span class="unit__num" data-unit="seconds">00</span><span class="unit__label">წამი</span></li>
+        </ol>
+        <div class="celebrate" aria-live="polite">
+          <p class="celebrate__title">გილოცავ დაბადების დღეს! 🎉🎂</p>
+          <p class="celebrate__sub" data-sub></p>
+        </div>
+      </div>
+
+      <div class="progress" role="progressbar" aria-label="გზა დაბადების დღისკენ" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="progress__track"><span class="progress__fill" data-progress-fill></span></span>
+        <span class="progress__value" data-progress-value>0%</span>
+      </div>
+    </section>
+  </main>
+
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
